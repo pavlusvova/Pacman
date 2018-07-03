@@ -1,0 +1,11 @@
+D:\Pacman\Pacman\Pacman\Pacman\bin\Debug\netcoreapp2.0\Pacman.deps.json
+D:\Pacman\Pacman\Pacman\Pacman\bin\Debug\netcoreapp2.0\Pacman.runtimeconfig.json
+D:\Pacman\Pacman\Pacman\Pacman\bin\Debug\netcoreapp2.0\Pacman.runtimeconfig.dev.json
+D:\Pacman\Pacman\Pacman\Pacman\bin\Debug\netcoreapp2.0\Pacman.dll
+D:\Pacman\Pacman\Pacman\Pacman\bin\Debug\netcoreapp2.0\Pacman.pdb
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.csprojAssemblyReference.cache
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.csproj.CoreCompileInputs.cache
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.AssemblyInfoInputs.cache
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.AssemblyInfo.cs
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.dll
+D:\Pacman\Pacman\Pacman\Pacman\obj\Debug\netcoreapp2.0\Pacman.pdb
