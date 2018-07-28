@@ -1,0 +1,22 @@
+﻿@page
+@model HighScoreModel
+@{
+
+}
+<table border="1" width="300" height="10" align="center">
+    <tr>
+        <td width="100">Ім'я</td>
+        <td width="100">Очки</td>
+    </tr>
+</table>
+@foreach (var u in @Model.Users)
+{
+    <div>
+        <table border="1" width="300" height="10" align="center">
+            <tr align="center" valign="bottom">
+                <td width="100">@u.Name</td>
+                <td width="100">@u.Score</td>
+            </tr>
+        </table>
+    </div>
+}

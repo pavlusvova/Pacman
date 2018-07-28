@@ -1,0 +1,85 @@
+﻿@page
+@model GameModel
+@{
+
+}
+<html>
+<head>
+    <style>
+        .wall {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/wall_.png');
+            display: inline-block;
+        }
+
+        .coin {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/coin_.png');
+            display: inline-block;
+        }
+        .supercoin {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/Block 1.png');
+            display: inline-block;
+        }
+        .ground {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/bg_.png');
+            display: inline-block;
+        }
+
+        .ghost {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/ghost1_.png');
+            display: inline-block;
+        }
+
+        .pacman {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/pacman_.png');
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    @for (int i = 0; i < Model.Rows; i++)
+    {
+    <div style="display:flex">
+        @for (int j = 0; j < Model.Columns; j++)
+        {
+            @switch (Model.Map.Elements[i, j])
+            {
+                case Models.Element.Wall:
+                    <div class="wall"></div>
+                    break;
+                case Models.Element.Coin:
+                    <div class="coin"></div>
+                    break;
+                case Models.Element.SuperCoin:
+                    <div class="supercoin"></div>
+                    break;
+                case Models.Element.EmptyField:
+                    <div class="ground"></div>
+                    break;
+                case Models.Element.Ghost:
+                    <div class="ghost"></div>
+                    break;
+                case Models.Element.LeftPackman:
+                    <div class="pacman"></div>
+                    break;
+            }
+        }
+    </div>
+    }
+    
+
+
+</body>
+</html>
