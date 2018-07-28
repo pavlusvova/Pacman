@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Pacman.Models;
 
 namespace Pacman
 {
@@ -14,7 +16,23 @@ namespace Pacman
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var host = BuildWebHost(args);
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<AppDbContext>();
+                    DbInitalizer.Seed(context);
+                }
+                catch (Exception)
+                {
+                    //fdvdfv
+                }
+            }
+
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
