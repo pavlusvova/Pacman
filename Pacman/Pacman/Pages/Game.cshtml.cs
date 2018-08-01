@@ -15,8 +15,10 @@ namespace Pacman.Pages
         public int Rows { get; set; }
         public int Columns { get; set; }
         public Map Map { get; set; }
+        public PacmanPosition Pacman { get; set; }
+        public int Score { get; set; }
 
-       
+
         public void OnGet()
         {
 
@@ -26,8 +28,10 @@ namespace Pacman.Pages
         {
             Map = new Map();
             Rows = Map.Elements.GetUpperBound(0) + 1;
-            Columns = Map.Elements.Length / Rows;  
-            
+            Columns = Map.Elements.Length / Rows;
+            Pacman = new PacmanPosition(14, 9);
+            Score = 0;
+
         }
     }
 }

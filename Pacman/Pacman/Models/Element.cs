@@ -7,9 +7,9 @@
         SuperCoin,
         EmptyField ,
         Ghost ,
-        LeftPackman ,
+        LeftPacman ,
         RightPacman ,
-        TopPackman ,
-        BottomPacman 
+        UpPackman ,
+        DownPacman 
     }
 }

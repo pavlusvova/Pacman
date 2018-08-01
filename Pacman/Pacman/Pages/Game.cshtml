@@ -19,12 +19,14 @@
             background-image: url('/images/coin_.png');
             display: inline-block;
         }
+
         .supercoin {
             height: 25px;
             width: 25px;
             background-image: url('/images/Block 1.png');
             display: inline-block;
         }
+
         .ground {
             height: 25px;
             width: 25px;
@@ -39,47 +41,168 @@
             display: inline-block;
         }
 
-        .pacman {
+        .pacmanRight {
             height: 25px;
             width: 25px;
-            background-image: url('/images/pacman_.png');
+            background-image: url('/images/pacmanRight.png');
+            display: inline-block;
+        }
+        .pacmanLeft {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/pacmanLeft.png');
+            display: inline-block;
+        }
+        .pacmanUp {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/pacmanUp.png');
+            display: inline-block;
+        }
+        .pacmanDown {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/pacmanDown.png');
+            display: inline-block;
+        }
+
+        .score {
+            height: 25px;
+            width: 500px;
             display: inline-block;
         }
     </style>
+
+    <script type="text/javascript">
+        var map = @(Html.Raw(Json.Serialize(Model.Map.Elements)));
+
+        var score = @Model.Score;
+        var pacmanX = @Model.Pacman.X;
+        var pacmanY = @Model.Pacman.Y;
+        document.onkeydown = function (event) {
+            console.log(score);
+        // console.log(event);
+            if (event.keyCode === 37) { // PACMAN MOVE LEFT
+                var leftElement = map[pacmanX][pacmanY - 1];
+                if (leftElement === 2
+                    || leftElement === 4
+                    || leftElement === 3) {
+                    map[pacmanX][pacmanY - 1] = 6;
+                    var leftY = pacmanY - 1;
+                    var leftPos = 'x_' + pacmanX + '_y_' + leftY;
+                    document.getElementById(leftPos).setAttribute("class", "pacmanLeft");
+
+                    map[pacmanX][pacmanY] = 4;
+                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
+                    document.getElementById(currentPos).setAttribute("class", "ground");
+                    pacmanY = pacmanY - 1;
+                }
+                if (leftElement === 2) {
+                    score = score + 10;
+                    document.getElementById("score").innerText = score;
+                }
+            }
+            else if (event.keyCode === 38) { // PACMAN MOVE UP
+                var upElement = map[pacmanX - 1][pacmanY];
+                if (upElement === 2
+                    || upElement === 4
+                    || upElement === 3) {
+                    map[pacmanX - 1][pacmanY] = 6;
+                    var upX = pacmanX - 1;
+                    var upPos = 'x_' + upX + '_y_' + pacmanY;
+                    document.getElementById(upPos).setAttribute("class", "pacmanUp");
+
+                    map[pacmanX][pacmanY] = 4;
+                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
+                    document.getElementById(currentPos).setAttribute("class", "ground");
+                    pacmanX = pacmanX - 1;
+                }
+                if (upElement === 2) {
+                    score = score + 10;
+                    document.getElementById("score").innerText = score;
+                }
+            }
+            else if (event.keyCode === 39) { // Model.Pacman MOVE RIGHT
+                var rightElement = map[pacmanX][pacmanY + 1];
+                if (rightElement === 2
+                    || rightElement === 4
+                    || rightElement === 3) {
+                    map[pacmanX][pacmanY + 1] = 6;
+                    var rightY = pacmanY + 1;
+                    var rightPos = 'x_' + pacmanX + '_y_' + rightY;
+                    document.getElementById(rightPos).setAttribute("class", "pacmanRight");
+
+                    map[pacmanX][pacmanY] = 4;
+                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
+                    document.getElementById(currentPos).setAttribute("class", "ground");
+                    pacmanY = pacmanY + 1;
+                }
+                if (rightElement === 2) {
+                    score = score + 10;
+                    document.getElementById("score").innerText = score;
+                }
+            }
+            else if (event.keyCode === 40) { // Model.Pacman MOVE DOWN
+                var downElement = map[pacmanX + 1][pacmanY];
+                if (downElement === 2
+                    || downElement === 4
+                    || downElement === 3) {
+                    map[pacmanX + 1][pacmanY] = 6;
+                    var downX = pacmanX + 1;
+                    var downPos = 'x_' + downX + '_y_' + pacmanY;
+                    document.getElementById(downPos).setAttribute("class", "pacmanDown");
+
+                    map[pacmanX][pacmanY] = 4;
+                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
+                    document.getElementById(currentPos).setAttribute("class", "ground");
+                    pacmanX = pacmanX + 1;}
+                if (downElement === 2) {
+                    score = score + 10;
+                    document.getElementById("score").innerText = score;
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
+    <div style="display:flex">
+    <div>Score:</div>
+    <div class="score" id="score">@Model.Score</div>
+    </div>
     @for (int i = 0; i < Model.Rows; i++)
     {
-    <div style="display:flex">
-        @for (int j = 0; j < Model.Columns; j++)
-        {
-            @switch (Model.Map.Elements[i, j])
+        <div style="display:flex">
+            @for (int j = 0; j < Model.Columns; j++)
             {
-                case Models.Element.Wall:
-                    <div class="wall"></div>
-                    break;
-                case Models.Element.Coin:
-                    <div class="coin"></div>
-                    break;
-                case Models.Element.SuperCoin:
-                    <div class="supercoin"></div>
-                    break;
-                case Models.Element.EmptyField:
-                    <div class="ground"></div>
-                    break;
-                case Models.Element.Ghost:
-                    <div class="ghost"></div>
-                    break;
-                case Models.Element.LeftPackman:
-                    <div class="pacman"></div>
-                    break;
+                var id = $"x_{i}_y_{j}";
+                var cls = string.Empty;
+                switch (Model.Map.Elements[i, j])
+                {
+                    case Models.Element.Wall:
+                        cls = "wall";
+                        break;
+                    case Models.Element.Coin:
+                        cls = "coin";
+                        break;
+                    case Models.Element.SuperCoin:
+                        cls = "supercoin";
+                        break;
+                    case Models.Element.EmptyField:
+                        cls = "ground";
+                        break;
+                    case Models.Element.Ghost:
+                        cls = "ghost";
+                        break;
+                    case Models.Element.RightPacman:
+                        cls = "pacmanRight";
+                        break;
+                }
+
+                <div class="@cls" id="@id"></div>
             }
-        }
-    </div>
+        </div>
     }
-    
-
-
 </body>
 </html>
+
