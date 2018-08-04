@@ -15,7 +15,8 @@ namespace Pacman.Pages
         public int Rows { get; set; }
         public int Columns { get; set; }
         public Map Map { get; set; }
-        public PacmanPosition Pacman { get; set; }
+        public Position Pacman { get; set; }
+        public List<Ghost> Ghosts { get; set; }
         public int Score { get; set; }
 
 
@@ -29,8 +30,15 @@ namespace Pacman.Pages
             Map = new Map();
             Rows = Map.Elements.GetUpperBound(0) + 1;
             Columns = Map.Elements.Length / Rows;
-            Pacman = new PacmanPosition(14, 9);
+            Pacman = new Position(14, 9);
             Score = 0;
+            Ghosts = new List<Ghost>
+            {
+                new Ghost(10,13, Element.EmptyField),
+                new Ghost(10,14, Element.EmptyField),
+                new Ghost(11,13, Element.EmptyField),
+                new Ghost(11,14, Element.EmptyField),
+            };
 
         }
     }

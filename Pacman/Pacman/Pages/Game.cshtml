@@ -47,22 +47,31 @@
             background-image: url('/images/pacmanRight.png');
             display: inline-block;
         }
+
         .pacmanLeft {
             height: 25px;
             width: 25px;
             background-image: url('/images/pacmanLeft.png');
             display: inline-block;
         }
+
         .pacmanUp {
             height: 25px;
             width: 25px;
             background-image: url('/images/pacmanUp.png');
             display: inline-block;
         }
+
         .pacmanDown {
             height: 25px;
             width: 25px;
             background-image: url('/images/pacmanDown.png');
+            display: inline-block;
+        }
+        .weakGhost {
+            height: 25px;
+            width: 25px;
+            background-image: url('/images/ghost2_.png');
             display: inline-block;
         }
 
@@ -77,98 +86,286 @@
         var map = @(Html.Raw(Json.Serialize(Model.Map.Elements)));
 
         var score = @Model.Score;
-        var pacmanX = @Model.Pacman.X;
-        var pacmanY = @Model.Pacman.Y;
-        document.onkeydown = function (event) {
-            console.log(score);
-        // console.log(event);
-            if (event.keyCode === 37) { // PACMAN MOVE LEFT
-                var leftElement = map[pacmanX][pacmanY - 1];
-                if (leftElement === 2
-                    || leftElement === 4
-                    || leftElement === 3) {
-                    map[pacmanX][pacmanY - 1] = 6;
-                    var leftY = pacmanY - 1;
-                    var leftPos = 'x_' + pacmanX + '_y_' + leftY;
-                    document.getElementById(leftPos).setAttribute("class", "pacmanLeft");
+        var pacman = @(Html.Raw(Json.Serialize(Model.Pacman)));
+        var ghosts = @(Html.Raw(Json.Serialize(Model.Ghosts)));
+        var isSuperMod = false;
+        var lastSuperModTime;
 
-                    map[pacmanX][pacmanY] = 4;
-                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
-                    document.getElementById(currentPos).setAttribute("class", "ground");
-                    pacmanY = pacmanY - 1;
-                }
+        function setNewClass(id, className) {
+            document.getElementById(id).setAttribute("class", className);
+        }
+
+        function increaseScore() {
+            score = score + 10;
+            document.getElementById("score").innerText = score;
+        }
+
+        function getId(x, y) {
+            return 'x_' + x + '_y_' + y;
+        }
+
+        function moveLeft(position, type, prevType) {
+            map[position.x][position.y - 1] = type;
+            var newId = getId(position.x, position.y - 1);
+            var className = getClassNameByType(type);
+            setNewClass(newId, className);
+
+            map[position.x][position.y] = prevType;
+            var currentId = getId(position.x, position.y);
+            var prevClassName = getClassNameByType(prevType);
+            setNewClass(currentId, prevClassName);
+        }
+
+        function moveUp(position, type, prevType) {
+            map[position.x - 1][position.y] = type;
+            var newId = getId(position.x - 1, position.y);
+            var className = getClassNameByType(type);
+            setNewClass(newId, className);
+
+            map[position.x][position.y] = prevType;
+            var currentId = getId(position.x, position.y);
+            var prevClassName = getClassNameByType(prevType);
+            setNewClass(currentId, prevClassName);
+        }
+
+        function moveRight(position, type, prevType) {
+            map[position.x][position.y + 1] = type;
+            var newId = getId(position.x, position.y + 1);
+            var className = getClassNameByType(type);
+            setNewClass(newId, className);
+
+            map[position.x][position.y] = prevType;
+            var currentId = getId(position.x, position.y);
+            var prevClassName = getClassNameByType(prevType);
+            setNewClass(currentId, prevClassName);
+        }
+
+        function moveDown(position, type, prevType) {
+            map[position.x + 1][position.y] = type;
+            var newId = getId(position.x + 1, position.y);
+            var className = getClassNameByType(type);
+            setNewClass(newId, className);
+
+            map[position.x][position.y] = prevType;
+            var currentId = getId(position.x, position.y);
+            var prevClassName = getClassNameByType(prevType);
+            setNewClass(currentId, prevClassName);
+        }
+
+
+        document.onkeydown = function (event) {
+            if (event.keyCode === 37) { // PACMAN MOVE LEFT
+                var leftElement = map[pacman.x][pacman.y - 1];
                 if (leftElement === 2) {
-                    score = score + 10;
-                    document.getElementById("score").innerText = score;
+                    moveLeft(pacman, 6, 4);
+                    pacman.y = pacman.y - 1;
+                    increaseScore();
+                }
+                else if (leftElement === 3) {
+                    moveLeft(pacman, 6, 4);
+                    pacman.y = pacman.y - 1;// 
+                    isSuperMod = true;
+                    lastSuperModTime = Date.now();
+                    increaseScore();
+                }
+                else if(leftElement === 4) {
+                    moveLeft(pacman, 6, 4);
+                    pacman.y = pacman.y - 1;
                 }
             }
             else if (event.keyCode === 38) { // PACMAN MOVE UP
-                var upElement = map[pacmanX - 1][pacmanY];
-                if (upElement === 2
-                    || upElement === 4
-                    || upElement === 3) {
-                    map[pacmanX - 1][pacmanY] = 6;
-                    var upX = pacmanX - 1;
-                    var upPos = 'x_' + upX + '_y_' + pacmanY;
-                    document.getElementById(upPos).setAttribute("class", "pacmanUp");
-
-                    map[pacmanX][pacmanY] = 4;
-                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
-                    document.getElementById(currentPos).setAttribute("class", "ground");
-                    pacmanX = pacmanX - 1;
-                }
+                var upElement = map[pacman.x - 1][pacman.y];
                 if (upElement === 2) {
-                    score = score + 10;
-                    document.getElementById("score").innerText = score;
+                    moveUp(pacman, 8, 4);
+                    pacman.x = pacman.x - 1;
+                    increaseScore();
+                }
+                else if (upElement === 3) {
+                    moveUp(pacman, 8, 4);
+                    pacman.x = pacman.x - 1;
+                    isSuperMod = true;
+                    lastSuperModTime = Date.now();
+                    increaseScore();
+                }
+                else if (upElement === 4) {
+                    moveUp(pacman, 8, 4);
+                    pacman.x = pacman.x - 1;
                 }
             }
             else if (event.keyCode === 39) { // Model.Pacman MOVE RIGHT
-                var rightElement = map[pacmanX][pacmanY + 1];
-                if (rightElement === 2
-                    || rightElement === 4
-                    || rightElement === 3) {
-                    map[pacmanX][pacmanY + 1] = 6;
-                    var rightY = pacmanY + 1;
-                    var rightPos = 'x_' + pacmanX + '_y_' + rightY;
-                    document.getElementById(rightPos).setAttribute("class", "pacmanRight");
-
-                    map[pacmanX][pacmanY] = 4;
-                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
-                    document.getElementById(currentPos).setAttribute("class", "ground");
-                    pacmanY = pacmanY + 1;
-                }
+                var rightElement = map[pacman.x][pacman.y + 1];
                 if (rightElement === 2) {
-                    score = score + 10;
-                    document.getElementById("score").innerText = score;
+                    moveRight(pacman, 7, 4);
+                    pacman.y = pacman.y + 1;
+                    increaseScore();
+                }
+                else if (rightElement === 3) {
+                    moveRight(pacman, 7, 4);
+                    pacman.y = pacman.y + 1;
+                    isSuperMod = true;
+                    lastSuperModTime = Date.now();
+                    increaseScore();
+                }
+                else if (rightElement === 4) {
+                    moveRight(pacman, 7, 4);
+                    pacman.y = pacman.y + 1;
                 }
             }
-            else if (event.keyCode === 40) { // Model.Pacman MOVE DOWN
-                var downElement = map[pacmanX + 1][pacmanY];
-                if (downElement === 2
-                    || downElement === 4
-                    || downElement === 3) {
-                    map[pacmanX + 1][pacmanY] = 6;
-                    var downX = pacmanX + 1;
-                    var downPos = 'x_' + downX + '_y_' + pacmanY;
-                    document.getElementById(downPos).setAttribute("class", "pacmanDown");
-
-                    map[pacmanX][pacmanY] = 4;
-                    var currentPos = 'x_' + pacmanX + '_y_' + pacmanY;
-                    document.getElementById(currentPos).setAttribute("class", "ground");
-                    pacmanX = pacmanX + 1;}
+            else if (event.keyCode === 40) { // Pacman MOVE DOWN
+                var downElement = map[pacman.x + 1][pacman.y];
                 if (downElement === 2) {
-                    score = score + 10;
-                    document.getElementById("score").innerText = score;
+                    moveDown(pacman, 9, 4);
+                    pacman.x = pacman.x + 1;
+                    increaseScore();
+                }
+                else if (downElement === 3) {
+                    moveDown(pacman, 9, 4);
+                    pacman.x = pacman.x + 1;
+                    isSuperMod = true;
+                    lastSuperModTime = Date.now();
+                    increaseScore();
+                }
+                else if (downElement === 4) {
+                    moveDown(pacman, 9, 4);
+                    pacman.x = pacman.x + 1;
                 }
             }
         }
+        function findDirection(ghost) {
+            var direction = Math.floor(Math.random() * 4) + 1;
+
+            if ((direction === 1 && (map[ghost.x][ghost.y - 1] === 1 || map[ghost.x][ghost.y - 1] === 5))
+                || (direction === 2 && (map[ghost.x + 1][ghost.y] === 1 || map[ghost.x + 1][ghost.y] === 5))
+                || (direction === 3 && (map[ghost.x][ghost.y + 1] === 1 || map[ghost.x][ghost.y + 1] === 5))
+                || (direction === 4 && (map[ghost.x - 1][ghost.y] === 1 || map[ghost.x - 1][ghost.y] === 5))) {
+                return findDirection(ghost);
+            }
+            return direction;
+        }
+
+        function getClassNameByType(type) {
+
+            if (type === 1) {
+                return "wall";
+            }
+            else if (type === 2) {
+                return "coin";
+            }
+            else if (type === 3) {
+                return "supercoin";
+            }
+            else if (type === 4) {
+                return "ground";
+            }
+            else if (type === 5) {
+                return "ghost";
+            }
+            else if (type === 6) {
+                return "pacmanLeft";
+            }
+            else if (type === 7) {
+                return "pacmanRight";
+            }
+            else if (type === 8) {
+                return "pacmanUp";
+            }
+            else if (type === 9) {
+                return "pacmanDown";
+            }
+            else if (type === 10) {
+                return "weakGhost";
+            }
+        }
+
+        setInterval(function () {
+            var ghostType = 5;
+            if (isSuperMod) {
+                ghostType = 10;
+                var dateTime = Date.now();
+                if (dateTime - lastSuperModTime > 7500) {
+                    isSuperMod = false;
+
+                }
+
+            }
+            for (var i = 0; i < 4; i++) {
+                var firstGhost = ghosts[i];
+                var direction = findDirection(firstGhost);
+                if (direction === 1) {
+                    var leftElement = map[firstGhost.x][firstGhost.y - 1];
+                    if (leftElement === 2
+                        || leftElement === 3
+                        || leftElement === 4) {
+                        moveLeft(firstGhost, ghostType, firstGhost.previousElement);
+                        ghosts[i].y = firstGhost.y - 1;
+                        ghosts[i].previousElement = leftElement;
+                    }
+                    else {
+                        //direction++;
+                    }
+                }
+                if (direction === 2) {
+                    var downElement = map[firstGhost.x + 1][firstGhost.y];
+                    if (downElement === 2
+                        || downElement === 3
+                        || downElement === 4) {
+                        moveDown(firstGhost, ghostType , firstGhost.previousElement);
+                        ghosts[i].x = firstGhost.x + 1;
+                        ghosts[i].previousElement = downElement;
+                    }
+                    else {
+                        //direction++;
+                    }
+ 
+                }
+                if (direction === 3) {
+                    var rightElement = map[firstGhost.x][firstGhost.y + 1];
+                    if (rightElement === 2
+                        || rightElement === 3
+                        || rightElement === 4) {
+                        moveRight(firstGhost, ghostType , firstGhost.previousElement);
+                        ghosts[i].y = firstGhost.y + 1;
+                        ghosts[i].previousElement = rightElement;
+                    }
+                    else {
+                        //direction++;
+                    }
+ 
+                }
+                if (direction === 4) {
+ 
+                    var upElement = map[firstGhost.x - 1][firstGhost.y];
+                    if (upElement === 2
+                        || upElement === 3
+                        || upElement === 4) {
+                        moveUp(firstGhost, ghostType , firstGhost.previousElement);
+                        ghosts[i].x = firstGhost.x - 1;
+                        ghosts[i].previousElement = upElement;
+                    }
+                    else {
+                        //direction++;
+                    }
+                }
+ 
+            }
+ 
+        }, 100)
+            //for (var i = 1; i < 4; i++) {
+            //    var ghost = ghosts[i];
+            //    if (leftElement === 2
+            //        || leftElement === 4
+            //        || leftElement === 3)
+
+            //}
+
+      
     </script>
 </head>
 
 <body>
     <div style="display:flex">
-    <div>Score:</div>
-    <div class="score" id="score">@Model.Score</div>
+        <div>Score:</div>
+        <div class="score" id="score">@Model.Score</div>
     </div>
     @for (int i = 0; i < Model.Rows; i++)
     {
@@ -194,8 +391,17 @@
                     case Models.Element.Ghost:
                         cls = "ghost";
                         break;
+                    case Models.Element.LeftPacman:
+                        cls = "pacmanLeft";
+                        break;
                     case Models.Element.RightPacman:
                         cls = "pacmanRight";
+                        break;
+                    case Models.Element.UpPackman:
+                        cls = "pacmanUp";
+                        break;
+                    case Models.Element.DownPacman:
+                        cls = "pacmanDown";
                         break;
                 }
 
@@ -206,3 +412,88 @@
 </body>
 </html>
 
+
+
+
+
+@*document.onkeydown = function (event) {
+        if (event.keyCode === 37) { // PACMAN MOVE LEFT
+            var leftElement = map[pacman.x][pacman.y - 1];
+            if (leftElement === 2) {
+                moveLeft(pacman, 6, 4);
+
+            }
+                || leftElement === 4
+                || leftElement === 3) {
+                map[pacman.x][pacman.y - 1] = 6;
+                var leftY = pacman.y - 1;
+                var leftPos = 'x_' + pacman.x + '_y_' + leftY;
+                setNewClass(leftPos, "pacmanLeft");
+
+                map[pacman.x][pacman.y] = 4;
+                var currentPos = 'x_' + pacman.x + '_y_' + pacman.y;
+                setNewClass(currentPos, "ground");
+                pacman.y = pacman.y - 1;
+            }
+            if (leftElement === 2) {
+                increaseScore();
+            }
+        }
+        else if (event.keyCode === 38) { // PACMAN MOVE UP
+            var upElement = map[pacman.x - 1][pacman.y];
+            if (upElement === 2
+                || upElement === 4
+                || upElement === 3) {
+                map[pacman.x - 1][pacman.y] = 6;
+                var upX = pacman.x - 1;
+                var upPos = 'x_' + upX + '_y_' + pacman.y;
+                setNewClass(upPos, "pacmanUp");
+
+                map[pacman.x][pacman.y] = 4;
+                var currentPos = 'x_' + pacman.x + '_y_' + pacman.y;
+                setNewClass(currentPos, "ground");
+                pacman.x = pacman.x - 1;
+            }
+            if (upElement === 2) {
+                increaseScore();
+            }
+        }
+        else if (event.keyCode === 39) { // Model.Pacman MOVE RIGHT
+            var rightElement = map[pacman.x][pacman.y + 1];
+            if (rightElement === 2
+                || rightElement === 4
+                || rightElement === 3) {
+                map[pacman.x][pacman.y + 1] = 6;
+                var rightY = pacman.y + 1;
+                var rightPos = 'x_' + pacman.x + '_y_' + rightY;
+                setNewClass(rightPos, "pacmanRight");
+
+                map[pacman.x][pacman.y] = 4;
+                var currentPos = 'x_' + pacman.x + '_y_' + pacman.y;
+                setNewClass(currentPos, "ground");
+                pacman.y = pacman.y + 1;
+            }
+            if (rightElement === 2) {
+                increaseScore();
+            }
+        }
+        else if (event.keyCode === 40) { // Model.Pacman MOVE DOWN
+            var downElement = map[pacman.x + 1][pacman.y];
+            if (downElement === 2
+                || downElement === 4
+                || downElement === 3) {
+                map[pacman.x + 1][pacman.y] = 6;
+                var downX = pacman.x + 1;
+                var downPos = 'x_' + downX + '_y_' + pacman.y;
+                setNewClass(downPos, "pacmanDown");
+
+                map[pacman.x][pacman.y] = 4;
+                var currentPos = 'x_' + pacman.x + '_y_' + pacman.y;
+                setNewClass(currentPos, "ground");
+                pacman.x = pacman.x + 1;
+            }
+            if (downElement === 2) {
+                increaseScore();
+            }
+        }
+    }*@
